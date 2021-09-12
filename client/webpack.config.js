@@ -34,10 +34,17 @@ module.exports = (env, argv) => {
       plugins: [
         new HtmlWebpackPlugin({
           template: "./src/index.html",
+          favicon: "./src/assets/icons/favicon.ico"
         }),
       ],
       devServer: {
         port: 3000,
+        proxy: {
+          "/api": {
+            target: "http://localhost:5000",
+            secure: false,
+          },
+        },
         historyApiFallback: true,
       },
     };
