@@ -8,6 +8,7 @@ module.exports = (env, argv) => {
       output: {
         filename: "bundle.js",
         path: path.join(__dirname, "public"),
+        publicPath: "/",
       },
       module: {
         rules: [
@@ -34,14 +35,14 @@ module.exports = (env, argv) => {
       plugins: [
         new HtmlWebpackPlugin({
           template: "./src/index.html",
-          favicon: "./src/assets/icons/favicon.ico"
+          favicon: "./src/assets/icons/favicon.ico",
         }),
       ],
       devServer: {
-        port: 3000,
+        port: 3002,
         proxy: {
           "/api": {
-            target: "http://localhost:5000",
+            target: "http://localhost:3001",
             secure: false,
           },
         },

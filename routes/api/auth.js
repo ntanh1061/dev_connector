@@ -10,7 +10,6 @@ const User = require("../../models/User");
 
 router.get("/", auth, async (req, res) => {
   try {
-    console.log("User", req.user);
     const user = await User.findById(req.user.id).select("password");
 
     res.json(user);
@@ -34,7 +33,7 @@ router.post(
     }
 
     const { email, password } = req.body;
-
+    
     try {
       const user = await User.findOne({ email });
 
@@ -48,7 +47,6 @@ router.post(
         });
       }
 
-      console.log("uset", user);
       const payload = {
         user: {
           id: user._id,

@@ -5,6 +5,8 @@ import {
 } from "@reduxjs/toolkit";
 import api from "../../utils/api";
 
+import setAuthToken from "../../utils/setAuthToken";
+
 const initialState = {
   isAuthenticate: false,
   token: localStorage.getItem("token"),
@@ -12,7 +14,7 @@ const initialState = {
   user: null,
 };
 
-export const register = createAsyncThunk("/register", async (user) => {
+export const register = createAsyncThunk("register", async (user) => {
   const response = await api.post("/users", user);
 
   return response.data;
@@ -43,16 +45,18 @@ const authReducer = createReducer(initialState, {
   [register.fulfilled]: (state, action) => {
     const token = action.payload?.token;
 
+    setAuthToken(token);
     return {
       ...state,
       token,
+      isAuthenticate: true,
       isLoading: false,
     };
   },
   [register.rejected]: (state, action) => {
-    const error = action.error;
+    console.error(action.error);
 
-    console.log("error", error);
+    setAuthToken(null);
     return {
       ...state,
       token: "",
@@ -67,8 +71,7 @@ const authReducer = createReducer(initialState, {
   },
   [login.fulfilled]: (state, action) => {
     const token = action.payload?.token;
-
-    console.log("token", token);
+    setAuthToken(token);
     return {
       ...state,
       isLoading: false,
@@ -76,8 +79,7 @@ const authReducer = createReducer(initialState, {
       token,
     };
   },
-  [login.rejected]: (state, action) => {
-    console.log("error", action.error);
+  [login.rejected]: (state) => {
     return {
       ...state,
       isLoading: false,

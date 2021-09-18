@@ -18,7 +18,6 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    console.log("req.body", req.body);
     const { name, email, password } = req.body;
 
     const errors = await validationResult(req);

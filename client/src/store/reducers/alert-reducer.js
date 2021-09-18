@@ -38,7 +38,6 @@ const alertReducer = createReducer(initialState, {
   [removeAlert]: (state, action) => {
     const alert = state.filter((item) => item.id !== action.payload.id);
 
-    console.log("al", alert);
     return [...alert];
   },
 });

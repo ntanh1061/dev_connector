@@ -20,7 +20,6 @@ const App = () => {
 
     window.addEventListener("storage", () => {
       if (!localStorage.token) {
-        console.log("LOGOUT");
         dispatch(logout());
       }
     });

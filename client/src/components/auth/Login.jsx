@@ -1,16 +1,21 @@
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
-const Login = (props) => {
-  const emailInputRef = useRef(null);
-  const passwordInputRef = useRef(null);
+const Login = ({ onLogin }) => {
+  const [user, setUser] = useState({});
 
   const loginHandler = (e) => {
     e.preventDefault();
 
-    props.onLogin({
-      email: emailInputRef.current.value,
-      password: passwordInputRef.current.value,
+    onLogin(user);
+  };
+
+  const onInputBlur = (e) => {
+    const { name, value } = e.target;
+
+    setUser({
+      ...user,
+      [name]: value,
     });
   };
 
@@ -20,13 +25,13 @@ const Login = (props) => {
       <p className="lead">
         <i className="fas fa-user"></i> Sign into Your Account
       </p>
-      <form className="form" onSubmit={(e) => loginHandler(e)}>
+      <form className="form">
         <div className="form-group">
           <input
             type="email"
             placeholder="Email Address"
             name="email"
-            ref={emailInputRef}
+            onBlur={(e) => onInputBlur(e)}
             required
           />
         </div>
@@ -35,11 +40,13 @@ const Login = (props) => {
             type="password"
             placeholder="Password"
             name="password"
-            ref={passwordInputRef}
+            onBlur={(e) => onInputBlur(e)}
             required
           />
         </div>
-        <input type="submit" className="btn btn-primary" value="Login" />
+        <button onClick={(e) => loginHandler(e)} className="btn btn-primary">
+          Login
+        </button>
       </form>
       <p className="my-1">
         Do not have an account? <Link to="/register">Sign Up</Link>

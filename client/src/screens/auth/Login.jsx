@@ -1,26 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { Redirect } from "react-router-dom";
 
 import Login from "../../components/auth/Login";
 import { login } from "../../store/reducers/auth";
 
 const ScreenLogin = () => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const { isAuthenticate } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (isAuthenticate) {
-      history.push("/dashboard");
-    }
-  }, [isAuthenticate]);
+  if (isAuthenticate) {
+    return <Redirect to="/dashboard" />;
+  }
 
   const loginHandler = (user) => {
     dispatch(login(user));
   };
 
-  return <Login onLogin={(user) => loginHandler(user)} />;
+  return <Login onLogin={loginHandler} />;
 };
 
 export default ScreenLogin;

@@ -1,51 +1,23 @@
-import React, { Fragment, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { setAlert } from "../../store/reducers/alert-reducer";
-import { register } from "../../store/reducers/auth";
+const Register = ({ onRegister }) => {
+  const [user, setUser] = useState({});
 
-const Register = () => {
-  const dispatch = useDispatch();
-  const { isAuthenticate } = useSelector((state) => state.auth);
-  const history = useHistory();
+  const onInputBlur = (e) => {
+    const { name, value } = e.target;
 
-  const nameInputRef = useRef(null);
-  const emailInputRef = useRef(null);
-  const passwordInputRef = useRef(null);
-  const confirmPasswordInputRef = useRef(null);
+    setUser({
+      ...user,
+      [name]: value,
+    });
+  };
 
-  useEffect(() => {
-    if (isAuthenticate) {
-      history.push("/dashboard");
-    }
-  }, [isAuthenticate]);
-  
   const registerHandler = (e) => {
     e.preventDefault();
-
-    const name = nameInputRef.current.value;
-    const email = emailInputRef.current.value;
-    const password = passwordInputRef.current.value;
-    const confirmPassword = confirmPasswordInputRef.current.value;
-    const user = {
-      name,
-      email,
-      password,
-    };
-
-    if (password !== confirmPassword) {
-      dispatch(
-        setAlert({
-          message: "Password not Match",
-          type: "danger",
-        })
-      );
-    } else {
-      dispatch(register(user));
-    }
+    onRegister(user);
   };
+
   return (
     <Fragment>
       <h1 className="large text-primary">Sign Up</h1>
@@ -59,7 +31,7 @@ const Register = () => {
             placeholder="Name"
             name="name"
             required
-            ref={nameInputRef}
+            onBlur={(e) => onInputBlur(e)}
           />
         </div>
         <div className="form-group">
@@ -68,7 +40,7 @@ const Register = () => {
             placeholder="Email Address"
             name="email"
             required
-            ref={emailInputRef}
+            onBlur={(e) => onInputBlur(e)}
           />
           <small className="form-text">
             This site uses Gravatar so if you want a profile image, use a
@@ -82,7 +54,7 @@ const Register = () => {
             name="password"
             minLength="6"
             required
-            ref={passwordInputRef}
+            onBlur={(e) => onInputBlur(e)}
           />
         </div>
         <div className="form-group">
@@ -92,7 +64,7 @@ const Register = () => {
             name="confirmPassword"
             minLength="6"
             required
-            ref={confirmPasswordInputRef}
+            onBlur={(e) => onInputBlur(e)}
           />
         </div>
         <input type="submit" className="btn btn-primary" value="Register" />
