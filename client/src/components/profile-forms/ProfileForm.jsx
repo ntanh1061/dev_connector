@@ -13,7 +13,7 @@ const CreateProfile = () => {
     location: "",
     skills: "",
     githubUsername: "",
-    about: "",
+    bio: "",
     twitter: "",
     facebook: "",
     youtube: "",
@@ -67,7 +67,7 @@ const CreateProfile = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(addProfile({ profile: formData, history }));
+    dispatch(addProfile({ profile: formData, history, isEdit: !creatingProfile }));
   };
   return (
     <Fragment>
@@ -169,8 +169,8 @@ const CreateProfile = () => {
         <div className="form-group">
           <textarea
             placeholder="A short bio of yourself"
-            value={formData.about}
-            name="about"
+            value={formData.bio}
+            name="bio"
             onChange={(e) => onInputChange(e)}
           ></textarea>
           <small className="form-text">

@@ -39,11 +39,15 @@ module.exports = (env, argv) => {
         }),
       ],
       devServer: {
-        port: 3002,
+        port: 3000,
         proxy: {
           "/api": {
             target: "http://localhost:3001",
             secure: false,
+            changeOrigin: true,
+            headers: {
+                   Connection: 'keep-alive'
+            }
           },
         },
         historyApiFallback: true,

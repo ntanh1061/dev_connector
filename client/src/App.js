@@ -14,16 +14,16 @@ const App = () => {
   useEffect(() => {
     if (localStorage.token) {
       setAuthToken(localStorage.token);
-    }
 
-    dispatch(authorizeUser());
+      dispatch(authorizeUser());
+    }
 
     window.addEventListener("storage", () => {
       if (!localStorage.token) {
         dispatch(logout());
       }
     });
-  }, []);
+  }, [dispatch, authorizeUser]);
 
   return (
     <Fragment>

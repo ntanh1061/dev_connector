@@ -81,11 +81,7 @@ const ProfileDetail = () => {
 
       <div className="profile-grid my-1">
         <div className="profile-top bg-primary p-2">
-          <img
-            className="round-img my-1"
-            src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
-            alt=""
-          />
+          <img className="round-img my-1" src={profile?.user?.avatar} alt="" />
           <h1 className="large">{profile?.user?.name}</h1>
           <p className="lead">{profile?.company}</p>
           <p>{profile?.location}</p>
@@ -112,7 +108,7 @@ const ProfileDetail = () => {
         </div>
         <div className="profile-about bg-light p-2">
           <h2 className="text-primary">{`${profile?.user?.name} Bio`}</h2>
-          <p>{profile?.description}</p>
+          <p>{profile?.bio}</p>
           <div className="line"></div>
           <h2 className="text-primary">Skill Set</h2>
           <div className="skills">{renderSkill(profile?.skills || [])}</div>

@@ -2,11 +2,11 @@ const _ = require("lodash");
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const gravatar = require('gravatar');
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
 const auth = require("../../middleware/auth");
+const checkObjectId = require("../../middleware/checkObjectId");
 
 // @route    POST api/profile
 // @desc     Add profile
@@ -84,20 +84,24 @@ router.get("/", async (req, res) => {
 // @route GET api/profile/user/:id
 // @desc Get profile by user id
 // @access Public
-router.get("/user/:user_id", async ({ params: { user_id } }, res) => {
-  try {
-    const profile = await Profile.findOne({ user: user_id }).populate("user", [
-      "name",
-      "avatar",
-    ]);
+router.get(
+  '/user/:user_id',
+  checkObjectId('user_id'),
+  async ({ params: { user_id } }, res) => {
+    try {
+      const profile = await Profile.findOne({ user: user_id }).populate(
+        "user",
+        ["name", "avatar"]
+      );
 
-    res.json({ profile });
-  } catch (err) {
-    console.error(err.message);
+      res.json({ profile });
+    } catch (err) {
+      console.error(err.message);
 
-    res.status(500).json("Internal Server Error");
+      res.status(500).json("Internal Server Error");
+    }
   }
-});
+);
 
 // @route DELETE api/profile
 // @desc Delete Account and Profile

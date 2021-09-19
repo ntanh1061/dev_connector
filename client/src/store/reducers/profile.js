@@ -20,10 +20,15 @@ const initialState = {
 
 export const addProfile = createAsyncThunk(
   "/profile",
-  async ({ profile, history }, { dispatch }) => {
+  async ({ profile, history, isEdit }, { dispatch }) => {
     const response = await api.post("/profile", profile);
 
-    dispatch(setAlert("Add/Update Profile Successfully", "success"));
+    dispatch(
+      setAlert(
+        `${isEdit ? "Update" : "Create"} Profile Successfully`,
+        "success"
+      )
+    );
 
     history.push("/dashboard");
     return response.data;
@@ -156,7 +161,6 @@ const profileSlice = createSlice({
           getProfileById.pending
         ),
         (state) => {
-          console.log("Pending");
           return {
             ...state,
             isLoading: true,
@@ -193,7 +197,6 @@ const profileSlice = createSlice({
           getProfileById.rejected
         ),
         (state) => {
-          console.log("Rejected");
           return {
             ...state,
             isError: false,
