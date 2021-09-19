@@ -1,15 +1,20 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 
 import api from "../../utils/api";
+import { logout } from "./auth";
+import { setAlert } from "./alert-reducer";
 
 const initialState = {
   isLoading: true,
+  isError: false,
+  isSuccess: false,
   profile: {},
 };
 
-export const addProfile = createAsyncThunk("/fuck", async (profile) => {
+export const addProfile = createAsyncThunk("/profile", async (profile, {dispatch}) => {
   const response = await api.post("/profile", profile);
 
+  dispatch(setAlert("Add/Update Profile Successfully", "success"));
   return response.data;
 });
 
@@ -21,19 +26,51 @@ export const getProfile = createAsyncThunk("/profile/me", async () => {
 
 export const addExperience = createAsyncThunk(
   "/profile-add-experience",
-  async (experience) => {
+  async (experience, {dispatch}) => {
     const response = await api.put("/profile/add-experience", experience);
 
+    dispatch(setAlert("Add Experience Successfully", "success"));
     return response.data;
   }
 );
 
 export const addEducation = createAsyncThunk(
   "/profile/add-education",
-  async (education, history) => {
+  async (education, {dispatch}) => {
     const response = await api.put("/profile/add-education", education);
 
-    history.push("/dashboard")
+    dispatch(setAlert("Add Education Successfully", "success"));
+    return response.data;
+  }
+);
+
+export const deleteEducation = createAsyncThunk(
+  "/profile/delete-education",
+  async (id, { dispatch }) => {
+    const response = await api.delete(`profile/delete-education/${id}`);
+
+    dispatch(setAlert("Delete Education Successfully", "success"));
+    return response.data;
+  }
+);
+
+export const deleteExperience = createAsyncThunk(
+  "/profile/delete-education",
+  async (id, { dispatch }) => {
+    const response = await api.delete(`profile/delete-experience/${id}`);
+
+    dispatch(setAlert("Delete Experience Successfully", "success"));
+    return response.data;
+  }
+);
+
+export const deleteAccount = createAsyncThunk(
+  "/delete-profile",
+  // eslint-disable-next-line no-empty-pattern
+  async ({}, { dispatch }) => {
+    const response = await api.delete("/profile");
+
+    dispatch(logout());
     return response.data;
   }
 );
@@ -43,107 +80,71 @@ const profileSlice = createSlice({
   name: "profile",
   reducers: {},
   extraReducers: (builder) => {
-    builder.addMatcher(
-      isAnyOf(
-        getProfile.pending,
-        addProfile.pending,
-        addExperience.pending,
-        addEducation.pending
-      ),
-      (state) => {
+    builder
+      .addCase(deleteAccount.pending, (state) => {
         return {
           ...state,
           isLoading: true,
         };
-      }
-    );
-    builder.addMatcher(
-      isAnyOf(
-        getProfile.fulfilled,
-        addProfile.fulfilled,
-        addExperience.fulfilled,
-        addEducation.fulfilled
-      ),
-      (state, action) => {
+      })
+      .addCase(deleteAccount.fulfilled, () => {
         return {
-          ...state,
-          isLoading: false,
-          profile: action.payload.profile,
+          initialState,
         };
-      }
-    );
-    builder.addMatcher(
-      isAnyOf(
-        getProfile.rejected,
-        addProfile.rejected,
-        addExperience.rejected,
-        addEducation.rejected
-      ),
-      (state) => {
-        return {
-          ...state,
-          isLoading: false,
-        };
-      }
-    );
-    // builder.addCase(getProfile.pending, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: true,
-    //   };
-    // });
-    // builder.addCase(getProfile.fulfilled, (state, action) => {
-    //   console.log("aa", action.payload);
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     profile: action.payload.profile,
-    //   };
-    // });
-    // builder.addCase(getProfile.rejected, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //   };
-    // });
-    // builder.addCase(addProfile.pending, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: true,
-    //   };
-    // });
-    // builder.addCase(addProfile.fulfilled, (state, action) => {
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     profile: action.payload.profile,
-    //   };
-    // });
-    // builder.addCase(addProfile.rejected, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //   };
-    // });
-    // builder.addCase(addExperience.pending, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: true,
-    //   };
-    // });
-    // builder.addCase(addExperience.fulfilled, (state, action) => {
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     profile: action.payload.profile,
-    //   };
-    // });
-    // builder.addCase(addExperience.rejected, (state) => {
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //   };
-    // });
+      })
+      .addMatcher(
+        isAnyOf(
+          getProfile.pending,
+          addProfile.pending,
+          addExperience.pending,
+          addEducation.pending,
+          deleteEducation.pending,
+          deleteExperience.pending
+        ),
+        (state) => {
+          console.log("Pending");
+          return {
+            ...state,
+            isLoading: true,
+          };
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          getProfile.fulfilled,
+          addProfile.fulfilled,
+          addExperience.fulfilled,
+          addEducation.fulfilled,
+          deleteEducation.fulfilled,
+          deleteExperience.fulfilled
+        ),
+        (state, action) => {
+          return {
+            ...state,
+            isLoading: true,
+            isSuccess: true,
+            profile: action.payload.profile,
+          };
+        }
+      )
+      .addMatcher(
+        isAnyOf(
+          getProfile.rejected,
+          addProfile.rejected,
+          addExperience.rejected,
+          addEducation.rejected,
+          deleteEducation.rejected,
+          deleteExperience.rejected
+        ),
+        (state) => {
+          console.log("Rejected");
+          return {
+            ...state,
+            isError: false,
+            isLoading: false,
+          };
+        }
+      );
   },
 });
 

@@ -14,9 +14,8 @@ const Dashboard = () => {
   useEffect(() => {
     console.log("reload", profile);
     dispatch(getProfile());
-  }, [getProfile]);
+  }, [dispatch, getProfile]);
 
-  console.log("profile", profile)
   const renderNoProfile = () => {
     return (
       <Fragment>
@@ -42,8 +41,12 @@ const Dashboard = () => {
             <i className="fas fa-graduation-cap text-primary"></i> Add Education
           </Link>
         </div>
-        {!_.isEmpty(profile.education) && <Experience experience={profile.experience} />}
-        {!_.isEmpty(profile.experience) && <Education education={profile.education} />}
+        {!_.isEmpty(profile.experience) && (
+          <Experience experience={profile.experience} />
+        )}
+        {!_.isEmpty(profile.education) && (
+          <Education education={profile.education} />
+        )}
 
         <div className="my-2">
           <button className="btn btn-danger">

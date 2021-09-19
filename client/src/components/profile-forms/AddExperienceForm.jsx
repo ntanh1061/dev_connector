@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-const AddExperienceForm = ({ addExperienceHandler }) => {
+import { addExperience } from "../../store/reducers/profile";
+
+const AddExperienceForm = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [experience, setExperience] = useState({});
 
@@ -21,7 +25,7 @@ const AddExperienceForm = ({ addExperienceHandler }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    addExperienceHandler(experience);
+    dispatch(addExperience(experience));
     history.push("/dashboard");
   };
 
@@ -62,11 +66,7 @@ const AddExperienceForm = ({ addExperienceHandler }) => {
         </div>
         <div className="form-group">
           <h4>From Date</h4>
-          <input
-            type="date"
-            name="from"
-            onChange={(e) => onInputChange(e)}
-          />
+          <input type="date" name="from" onChange={(e) => onInputChange(e)} />
         </div>
         <div className="form-group">
           <p>

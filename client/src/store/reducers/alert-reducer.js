@@ -6,14 +6,15 @@ const initialState = [];
 const addAlert = createAction("ADD_ALERT");
 const removeAlert = createAction("REMOVE_ALERT");
 
-export const setAlert = (alert) => {
+export const setAlert = (message, type) => {
   return (dispatch) => {
     const id = uuidv4();
 
     dispatch(
       addAlert({
         id,
-        ...alert,
+        message,
+        type
       })
     );
 

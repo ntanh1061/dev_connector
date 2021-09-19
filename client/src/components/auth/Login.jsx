@@ -1,14 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const Login = ({ onLogin }) => {
+import { login } from "../../store/reducers/auth";
+
+const Login = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticate } = useSelector((state) => state.auth);
   const [user, setUser] = useState({});
-
-  const loginHandler = (e) => {
-    e.preventDefault();
-
-    onLogin(user);
-  };
 
   const onInputBlur = (e) => {
     const { name, value } = e.target;
@@ -18,6 +17,16 @@ const Login = ({ onLogin }) => {
       [name]: value,
     });
   };
+
+  const loginHandler = (e) => {
+    e.preventDefault();
+
+    dispatch(login(user));
+  };
+
+  if (isAuthenticate) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <Fragment>

@@ -4,6 +4,7 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
 const Profile = require("../../models/Profile");
+const User = require("../../models/User");
 const auth = require("../../middleware/auth");
 
 // @route    POST api/profile
@@ -62,6 +63,26 @@ router.post(
   }
 );
 
+// @route DELETE api/profile
+// @desc Delete Account and Profile
+// @access Private
+router.delete("/delete-account", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    await Promise.all([
+      Profile.findByIdAndRemove({ user: req.user.id }),
+      User.findByIdAndRemove({ user: req.user.id }),
+    ]);
+
+    res.json({ msg: "Delete successfully" });
+  } catch (err) {
+    console.error(err.message);
+
+    res.status(500).json("Internal Server Error");
+  }
+});
+
 // @route    GET api/profile/me
 // @desc     Get current users profile
 // @access   Private
@@ -90,7 +111,7 @@ router.put("/add-experience", auth, async (req, res) => {
 
     await profile.save();
 
-    res.json(profile);
+    res.json({ profile });
   } catch (err) {
     console.error(err.message);
 
@@ -109,7 +130,49 @@ router.put("/add-education", auth, async (req, res) => {
 
     await profile.save();
 
-    res.json(profile);
+    res.json({ profile });
+  } catch (err) {
+    console.error(err.message);
+
+    res.status(500).json("Internal Server Error");
+  }
+});
+
+// @route DELETE api/profile/delete-education
+// @desc Delete Education
+// @access Private
+router.delete("/delete-education/:education_id", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    profile.education = await profile.education.filter((item) => {
+      return item._id.toString() !== req.params.education_id;
+    });
+
+    await profile.save();
+
+    res.json({ profile });
+  } catch (err) {
+    console.error(err.message);
+
+    res.status(500).json("Internal Server Error");
+  }
+});
+
+// @route DELETE api/profile/delete-experience
+// @desc Delete Experience
+// @access Private
+router.delete("/delete-experience/:experience_id", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    profile.experience = await profile.experience.filter((item) => {
+      return item._id.toString() !== req.params.experience_id;
+    });
+
+    await profile.save();
+
+    res.json({ profile });
   } catch (err) {
     console.error(err.message);
 

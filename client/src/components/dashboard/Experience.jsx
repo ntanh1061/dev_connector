@@ -1,10 +1,14 @@
 import React, { Fragment } from "react";
-
+import { useDispatch } from "react-redux";
 import moment from "moment";
 
+import { deleteExperience } from "../../store/reducers/profile";
+
 const Experience = ({ experience }) => {
-  const deleteExperienceHandler = () => {
-    //Delete Experience by id
+  const dispatch = useDispatch();
+
+  const deleteExperienceHandler = (experienceId) => {
+    dispatch(deleteExperience(experienceId));
   };
 
   const renderRow = experience.map((item, index) => {
@@ -14,7 +18,9 @@ const Experience = ({ experience }) => {
           <td>{item.company}</td>
           <td className="hide-sm">{item.title}</td>
           <td className="hide-sm">{item.location}</td>
-          <td className="hide-sm">{`${moment(item.from).format('MM DD YYYY')} - ${moment(item.to).format('MM DD YYYY')}`}</td>
+          <td className="hide-sm">{`${moment(item.from).format(
+            "MM DD YYYY"
+          )} - ${moment(item.to).format("MM DD YYYY")}`}</td>
           <td>
             <button
               className="btn btn-danger"
@@ -35,6 +41,7 @@ const Experience = ({ experience }) => {
           <tr>
             <th>Company</th>
             <th className="hide-sm">Title</th>
+            <th className="hide-sm">Location</th>
             <th className="hide-sm">Years</th>
             <th></th>
           </tr>

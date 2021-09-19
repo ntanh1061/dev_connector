@@ -1,7 +1,13 @@
 import React, { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const Register = ({ onRegister }) => {
+import { setAlert } from "../../store/reducers/alert-reducer";
+import { register } from "../../store/reducers/auth";
+
+const Register = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticate } = useSelector((state) => state.auth);
   const [user, setUser] = useState({});
 
   const onInputBlur = (e) => {
@@ -15,8 +21,17 @@ const Register = ({ onRegister }) => {
 
   const registerHandler = (e) => {
     e.preventDefault();
-    onRegister(user);
+
+    if (user?.password !== user?.confirmPassword) {
+      dispatch(setAlert("Password not Match", "danger"));
+    } else {
+      dispatch(register(user));
+    }
   };
+
+  if (isAuthenticate) {
+    return <Redirect to="/dashboard" />;
+  }
 
   return (
     <Fragment>

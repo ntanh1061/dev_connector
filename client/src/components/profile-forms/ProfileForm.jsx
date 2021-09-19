@@ -1,12 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 import SocialNetwork from "./SocialNetwork";
+import { addProfile } from "../../store/reducers/profile";
 
-const CreateProfile = ({
-  onAddProfile,
-  profile: { profile },
-  creatingProfile,
-}) => {
+const CreateProfile = () => {
   const initFormData = {
     status: "",
     company: "",
@@ -23,6 +22,10 @@ const CreateProfile = ({
   };
   const [formData, setFormData] = useState(initFormData);
   const [isAddSocial, setIsAddSocial] = useState(false);
+  const dispatch = useDispatch();
+  const { profile } = useSelector((state) => state.profile);
+  const history = useHistory();
+  const creatingProfile = useRouteMatch("create-profile");
 
   useEffect(() => {
     if (!creatingProfile) {
@@ -64,7 +67,8 @@ const CreateProfile = ({
   const onSubmit = (e) => {
     e.preventDefault();
 
-    onAddProfile(formData);
+    dispatch(addProfile(profile));
+    history.push("/dashboard");
   };
   return (
     <Fragment>

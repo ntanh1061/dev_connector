@@ -4,7 +4,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/layout/Navbar";
 import Landing from "./components/layout/Landing";
-import Routes from "./routes/Routes";
+import ScreenRoot from "./screens";
 import setAuthToken from "./utils/setAuthToken";
 import { authorizeUser, logout } from "./store/reducers/auth";
 import { useDispatch } from "react-redux";
@@ -30,7 +30,7 @@ const App = () => {
       <Navbar />
       <Switch>
         <Route path="/" exact component={Landing} />
-        <Routes />
+        <ScreenRoot />
         <Route path="*">
           <Redirect to="/" />
         </Route>

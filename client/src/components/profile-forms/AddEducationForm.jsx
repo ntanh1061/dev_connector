@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-const AddEducationForm = ({ addEducationHandler }) => {
+import { addEducation } from "../../store/reducers/profile";
+
+const AddEducationForm = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const [education, setEducation] = useState({});
@@ -22,7 +26,8 @@ const AddEducationForm = ({ addEducationHandler }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    addEducationHandler(education);
+    dispatch(addEducation(education));
+    history.push("/dashboard");
   };
 
   return (

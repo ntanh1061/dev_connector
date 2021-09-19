@@ -1,10 +1,13 @@
 import React, { Fragment } from "react";
-
+import { useDispatch } from "react-redux";
 import moment from "moment";
 
+import { deleteEducation } from "../../store/reducers/profile";
+
 const Education = ({ education }) => {
-  const deleteEducationHandler = () => {
-    //Delete education by id
+  const dispatch = useDispatch();
+  const deleteEducationHandler = (educationId) => {
+    dispatch(deleteEducation(educationId));
   };
 
   const renderRow = education.map((item, index) => {
@@ -14,7 +17,9 @@ const Education = ({ education }) => {
           <td>{item.school}</td>
           <td className="hide-sm">{item.degree}</td>
           <td className="hide-sm">{item.description}</td>
-          <td className="hide-sm">{`${moment(item.from).format('MM DD YYYY')} - ${moment(item.to).format('MM DD YYYY')}`}</td>
+          <td className="hide-sm">{`${moment(item.from).format(
+            "MM DD YYYY"
+          )} - ${moment(item.to).format("MM DD YYYY")}`}</td>
           <td>
             <button
               className="btn btn-danger"
@@ -35,6 +40,7 @@ const Education = ({ education }) => {
           <tr>
             <th>School</th>
             <th className="hide-sm">Degree</th>
+            <th className="hide-sm">Description</th>
             <th className="hide-sm">Years</th>
             <th />
           </tr>
