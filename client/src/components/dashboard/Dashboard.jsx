@@ -5,16 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import Experience from "./Experience";
 import Education from "./Education";
-import { getProfile } from "../../store/reducers/profile";
+import { getProfile, deleteAccount } from "../../store/reducers/profile";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.profile);
 
   useEffect(() => {
-    console.log("reload", profile);
     dispatch(getProfile());
   }, [dispatch, getProfile]);
+
+  const onDeleteAccount = () => {
+    dispatch(deleteAccount());
+  };
 
   const renderNoProfile = () => {
     return (
@@ -49,7 +52,7 @@ const Dashboard = () => {
         )}
 
         <div className="my-2">
-          <button className="btn btn-danger">
+          <button onClick={() => onDeleteAccount()} className="btn btn-danger">
             <i className="fas fa-user-minus"></i>
             Delete My Account
           </button>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import Profile from "../../components/profiles/ProfileDetail";
+import Profile from "../../components/profiles/Detail";
 
 const ScreenProfileDetail = () => {
   return <Profile />;

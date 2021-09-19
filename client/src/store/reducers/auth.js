@@ -6,6 +6,7 @@ import {
 import api from "../../utils/api";
 
 import setAuthToken from "../../utils/setAuthToken";
+import { setAlert } from "./alert-reducer";
 
 const initialState = {
   isAuthenticate: false,
@@ -20,12 +21,17 @@ export const register = createAsyncThunk("register", async (user) => {
   return response.data;
 });
 
-export const login = createAsyncThunk("login", async ({ email, password }) => {
-  const body = { email, password };
-  const response = await api.post("/auth", body);
+export const login = createAsyncThunk(
+  "login",
+  async ({ email, password }, { dispatch }) => {
+    const body = { email, password };
+    const response = await api.post("/auth", body).catch(() => {
+      dispatch(setAlert("Email or Password is Invalid!", "danger"));
+    });
 
-  return response.data;
-});
+    return response.data;
+  }
+);
 
 export const authorizeUser = createAsyncThunk("authorizeUser", async () => {
   const response = await api.get("/auth");
@@ -80,6 +86,7 @@ const authReducer = createReducer(initialState, {
     };
   },
   [login.rejected]: (state) => {
+    console.log("-----");
     return {
       ...state,
       isLoading: false,

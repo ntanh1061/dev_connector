@@ -25,7 +25,7 @@ const CreateProfile = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.profile);
   const history = useHistory();
-  const creatingProfile = useRouteMatch("create-profile");
+  const creatingProfile = useRouteMatch("/create-profile");
 
   useEffect(() => {
     if (!creatingProfile) {
@@ -67,8 +67,7 @@ const CreateProfile = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(addProfile(profile));
-    history.push("/dashboard");
+    dispatch(addProfile({ profile: formData, history }));
   };
   return (
     <Fragment>

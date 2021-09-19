@@ -1,20 +1,20 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 
-import PrivateRoute from "../routes/PrivateRoute";
+import PrivateRoute from "./PrivateRoute";
 import NotFound from "../components/layout/NotFound";
 import Alert from "../components/layout/Alert";
-import ScreenLanding from "./home/Land";
-import ScreenLogin from "./auth/Login";
-import ScreenRegister from "./auth/Register";
-import ScreenProfileDetail from "./profile/Detail";
-import ScreenProfiles from "./profile/List";
-import ScreenDashboard from "./dashboard/Dashboard";
-import ScreenProfileForm from "./profile-forms/ProfileForm";
-import ScreenAddEducation from "./profile-forms/AddEducationForm";
-import ScreenExperience from "./profile-forms/AddExperienceForm";
+import ScreenLanding from "../screens/home/Land";
+import ScreenLogin from "../screens/auth/Login";
+import ScreenRegister from "../screens/auth/Register";
+import ScreenProfileDetail from "../screens/profile/Detail";
+import ScreenProfiles from "../screens/profile/List";
+import ScreenDashboard from "../screens/dashboard/Dashboard";
+import ScreenProfileForm from "../screens/profile-forms/ProfileForm";
+import ScreenAddEducation from "../screens/profile-forms/AddEducationForm";
+import ScreenExperience from "../screens/profile-forms/AddExperienceForm";
 
-const ScreenRoot = () => {
+const Routes = () => {
   return (
     <section className="container">
       <Alert />
@@ -51,4 +51,4 @@ const ScreenRoot = () => {
   );
 };
 
-export default ScreenRoot;
+export default Routes;

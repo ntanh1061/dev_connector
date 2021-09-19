@@ -26,8 +26,7 @@ const AddEducationForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(addEducation(education));
-    history.push("/dashboard");
+    dispatch(addEducation({ education, history }));
   };
 
   return (

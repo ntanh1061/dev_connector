@@ -25,8 +25,7 @@ const AddExperienceForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(addExperience(experience));
-    history.push("/dashboard");
+    dispatch(addExperience({ experience, history }));
   };
 
   return (

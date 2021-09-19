@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  isAnyOf,
+  createAction,
+} from "@reduxjs/toolkit";
 
 import api from "../../utils/api";
 import { logout } from "./auth";
@@ -9,14 +14,33 @@ const initialState = {
   isError: false,
   isSuccess: false,
   profile: {},
+  profiles: [],
+  count: 0,
 };
 
-export const addProfile = createAsyncThunk("/profile", async (profile, {dispatch}) => {
-  const response = await api.post("/profile", profile);
+export const addProfile = createAsyncThunk(
+  "/profile",
+  async ({ profile, history }, { dispatch }) => {
+    const response = await api.post("/profile", profile);
 
-  dispatch(setAlert("Add/Update Profile Successfully", "success"));
-  return response.data;
-});
+    dispatch(setAlert("Add/Update Profile Successfully", "success"));
+
+    history.push("/dashboard");
+    return response.data;
+  }
+);
+
+export const getAllProfiles = createAsyncThunk(
+  "/get-all-profile",
+  async (criteria) => {
+    const { page } = criteria;
+    const response = await api.get("/profile", {
+      params: { page },
+    });
+
+    return response.data;
+  }
+);
 
 export const getProfile = createAsyncThunk("/profile/me", async () => {
   const response = await api.get("/profile/me");
@@ -24,22 +48,33 @@ export const getProfile = createAsyncThunk("/profile/me", async () => {
   return response.data;
 });
 
+export const getProfileById = createAsyncThunk(
+  "profile/user/:userId",
+  async (userId) => {
+    const response = await api.get(`/profile/user/${userId}`);
+
+    return response.data;
+  }
+);
+
 export const addExperience = createAsyncThunk(
   "/profile-add-experience",
-  async (experience, {dispatch}) => {
+  async ({ experience, history }, { dispatch }) => {
     const response = await api.put("/profile/add-experience", experience);
 
     dispatch(setAlert("Add Experience Successfully", "success"));
+    history.push("/dashboard");
     return response.data;
   }
 );
 
 export const addEducation = createAsyncThunk(
   "/profile/add-education",
-  async (education, {dispatch}) => {
+  async ({ education, history }, { dispatch }) => {
     const response = await api.put("/profile/add-education", education);
 
     dispatch(setAlert("Add Education Successfully", "success"));
+    history.push("/dashboard");
     return response.data;
   }
 );
@@ -66,14 +101,15 @@ export const deleteExperience = createAsyncThunk(
 
 export const deleteAccount = createAsyncThunk(
   "/delete-profile",
-  // eslint-disable-next-line no-empty-pattern
-  async ({}, { dispatch }) => {
+  async (id, { dispatch }) => {
     const response = await api.delete("/profile");
 
     dispatch(logout());
     return response.data;
   }
 );
+
+export const setCriteria = createAction("SET_CRITERIA");
 
 const profileSlice = createSlice({
   initialState: initialState,
@@ -92,6 +128,23 @@ const profileSlice = createSlice({
           initialState,
         };
       })
+      .addCase(getAllProfiles.pending, (state) => {
+        return {
+          ...state,
+          isLoading: true,
+        };
+      })
+      .addCase(getAllProfiles.fulfilled, (state, action) => {
+        const { profiles, count } = action.payload;
+
+        console.log(action.payload);
+        return {
+          ...state,
+          isLoading: false,
+          profiles,
+          count,
+        };
+      })
       .addMatcher(
         isAnyOf(
           getProfile.pending,
@@ -99,7 +152,8 @@ const profileSlice = createSlice({
           addExperience.pending,
           addEducation.pending,
           deleteEducation.pending,
-          deleteExperience.pending
+          deleteExperience.pending,
+          getProfileById.pending
         ),
         (state) => {
           console.log("Pending");
@@ -116,7 +170,8 @@ const profileSlice = createSlice({
           addExperience.fulfilled,
           addEducation.fulfilled,
           deleteEducation.fulfilled,
-          deleteExperience.fulfilled
+          deleteExperience.fulfilled,
+          getProfileById.fulfilled
         ),
         (state, action) => {
           return {
@@ -134,7 +189,8 @@ const profileSlice = createSlice({
           addExperience.rejected,
           addEducation.rejected,
           deleteEducation.rejected,
-          deleteExperience.rejected
+          deleteExperience.rejected,
+          getProfileById.rejected
         ),
         (state) => {
           console.log("Rejected");

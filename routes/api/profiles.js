@@ -2,6 +2,7 @@ const _ = require("lodash");
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const gravatar = require('gravatar');
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
@@ -22,16 +23,8 @@ router.post(
       return res.status(400).json({ errors: errors.array });
     }
 
-    const {
-      status,
-      skills,
-      twitter,
-      facebook,
-      youtube,
-      linkedin,
-      instagram,
-      ...rest
-    } = req.body;
+    const { skills, twitter, facebook, youtube, linkedin, instagram, ...rest } =
+      req.body;
 
     const profileFields = {
       user: req.user.id,
@@ -63,16 +56,57 @@ router.post(
   }
 );
 
+// @route GET api/profile
+// @desc Get all profiles
+// @access Public
+router.get("/", async (req, res) => {
+  try {
+    const limit = 5;
+    const page = parseInt(req.query.page);
+    const skip = (page - 1) * limit;
+
+    const profiles = await Profile.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("user", ["name", "avatar"]);
+
+    const numberProfiles = await Profile.countDocuments();
+
+    const count = Math.floor(numberProfiles / limit) + 1;
+    res.json({ profiles, count });
+  } catch (err) {
+    console.error(err.message);
+
+    res.status(500).json("Internal Server Error");
+  }
+});
+
+// @route GET api/profile/user/:id
+// @desc Get profile by user id
+// @access Public
+router.get("/user/:user_id", async ({ params: { user_id } }, res) => {
+  try {
+    const profile = await Profile.findOne({ user: user_id }).populate("user", [
+      "name",
+      "avatar",
+    ]);
+
+    res.json({ profile });
+  } catch (err) {
+    console.error(err.message);
+
+    res.status(500).json("Internal Server Error");
+  }
+});
+
 // @route DELETE api/profile
 // @desc Delete Account and Profile
 // @access Private
-router.delete("/delete-account", auth, async (req, res) => {
+router.delete("/", auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.user.id });
-
     await Promise.all([
-      Profile.findByIdAndRemove({ user: req.user.id }),
-      User.findByIdAndRemove({ user: req.user.id }),
+      Profile.findOneAndRemove({ user: req.user.id }),
+      User.findOneAndRemove({ _id: req.user.id }),
     ]);
 
     res.json({ msg: "Delete successfully" });
@@ -127,7 +161,6 @@ router.put("/add-education", auth, async (req, res) => {
     const profile = await Profile.findOne({ user: req.user.id });
 
     profile.education.unshift(req.body);
-
     await profile.save();
 
     res.json({ profile });

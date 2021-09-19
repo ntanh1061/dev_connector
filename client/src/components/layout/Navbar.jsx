@@ -40,7 +40,7 @@ const Navbar = () => {
       </h1>
       <ul>
         <li>
-          <Link to="/dashboard">Developers</Link>
+          <Link to="/profiles">Developers</Link>
         </li>
         {renderLogin()}
       </ul>
